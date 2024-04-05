@@ -3,10 +3,11 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_rust_bridge_practice/src/rust/api/simple.dart';
 import 'package:flutter_rust_bridge_practice/src/rust/frb_generated.dart';
+import 'package:flutter_rust_bridge_practice/src/rust/api/functions/hello.dart';
 
 Future<void> main() async {
   await RustLib.init();
-  final result = await hello(a: "Hi");
+  final result = await hello(a: "Hello! ");
   log(result);
   runApp(const MyApp());
 }
