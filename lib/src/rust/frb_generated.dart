@@ -66,6 +66,8 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
 abstract class RustLibApi extends BaseApi {
   String greet({required String name, dynamic hint});
 
+  Future<String> hello({required String a, dynamic hint});
+
   Future<void> initApp({dynamic hint});
 }
 
@@ -99,6 +101,31 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   TaskConstMeta get kGreetConstMeta => const TaskConstMeta(
         debugName: "greet",
         argNames: ["name"],
+      );
+
+  @override
+  Future<String> hello({required String a, dynamic hint}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_String(a, serializer);
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 3, port: port_);
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_String,
+        decodeErrorData: null,
+      ),
+      constMeta: kHelloConstMeta,
+      argValues: [a],
+      apiImpl: this,
+      hint: hint,
+    ));
+  }
+
+  TaskConstMeta get kHelloConstMeta => const TaskConstMeta(
+        debugName: "hello",
+        argNames: ["a"],
       );
 
   @override
